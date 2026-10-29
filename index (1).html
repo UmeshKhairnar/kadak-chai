@@ -1,0 +1,317 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Bahi | GST billing for small shops</title>
+<meta name="description" content="Bahi is a sample sales page for a fictional GST billing app. Send invoices in 20 seconds and keep your books ready for filing.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Familjen+Grotesk:wght@500;700&family=Public+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* Layout: split hero with a working GST calculator as the product demo, then ruled feature list, pricing, FAQ. */
+:root {
+  --bg: #F2F4F1;
+  --surface: #FFFFFF;
+  --fg: #12151C;
+  --muted: #5B6270;
+  --line: #D6DAD3;
+  --accent: #1C3FD6;
+  --accent-fg: #FFFFFF;
+  --good: #0E7A4F;
+  --font-display: "Familjen Grotesk", "Arial Narrow", system-ui, sans-serif;
+  --font-body: "Public Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #0C0F16; --surface: #151A25; --fg: #EAEDF3; --muted: #9AA3B5; --line: #272E3D;
+    --accent: #6C86FF; --accent-fg: #0C0F16; --good: #4CD08F;
+    color-scheme: dark;
+  }
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  margin: 0; background: var(--bg); color: var(--fg);
+  font-family: var(--font-body); font-size: 16px; line-height: 1.6;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+}
+.wrap { max-width: 1080px; margin: 0 auto; }
+a { color: inherit; }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+.btn {
+  display: inline-block; font: inherit; font-weight: 600; text-decoration: none; cursor: pointer;
+  background: var(--accent); color: var(--accent-fg); border: 2px solid var(--accent);
+  padding: 12px 22px; border-radius: 4px;
+}
+.btn:hover { filter: brightness(1.08); }
+.btn.ghost { background: transparent; color: var(--fg); border-color: var(--fg); }
+.btn.ghost:hover { background: var(--fg); color: var(--bg); filter: none; }
+
+header.top { display: flex; justify-content: space-between; align-items: center; gap: 16px; flex-wrap: wrap; padding-block: 18px; }
+.logo { font-family: var(--font-display); font-weight: 700; font-size: 1.5rem; letter-spacing: -0.02em; text-decoration: none; }
+.logo span { color: var(--accent); }
+nav { display: flex; align-items: center; gap: 22px; flex-wrap: wrap; font-size: 0.95rem; }
+nav a:not(.btn) { text-decoration: none; color: var(--muted); }
+nav a:not(.btn):hover { color: var(--fg); }
+nav .btn { padding: 8px 16px; }
+
+.hero { display: grid; grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr); gap: 48px; align-items: center; padding-block: 56px 72px; }
+.eyebrow { font-family: var(--font-mono); font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--accent); margin: 0 0 16px; }
+h1 { font-family: var(--font-display); font-weight: 700; font-size: clamp(2.4rem, 6.4vw, 4.4rem); line-height: 1; letter-spacing: -0.03em; margin: 0 0 20px; text-wrap: balance; }
+.lede { font-size: 1.15rem; color: var(--muted); max-width: 46ch; margin: 0 0 28px; }
+.cta { display: flex; gap: 12px; flex-wrap: wrap; }
+.fine { margin: 16px 0 0; font-size: 0.85rem; color: var(--muted); }
+
+.calc { background: var(--surface); border: 1px solid var(--line); border-radius: 6px; padding: 22px; box-shadow: 0 1px 0 var(--line), 0 18px 40px -24px rgba(18, 21, 28, 0.35); min-width: 0; }
+.calc h2 { font-family: var(--font-mono); font-weight: 500; font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--muted); margin: 0 0 16px; }
+.field { display: grid; gap: 6px; margin-bottom: 14px; }
+.field label { font-size: 0.85rem; color: var(--muted); }
+.field input, .field select {
+  font: inherit; font-family: var(--font-mono); color: var(--fg); background: var(--bg);
+  border: 1px solid var(--line); border-radius: 4px; padding: 10px 12px; width: 100%;
+}
+.seg { display: grid; grid-template-columns: 1fr 1fr; border: 1px solid var(--line); border-radius: 4px; overflow: hidden; }
+.seg button { font: inherit; font-size: 0.9rem; background: var(--bg); color: var(--muted); border: 0; padding: 9px 8px; cursor: pointer; }
+.seg button + button { border-left: 1px solid var(--line); }
+.seg button[aria-pressed="true"] { background: var(--fg); color: var(--bg); }
+.lines { margin: 18px 0 0; padding-top: 14px; border-top: 1px dashed var(--line); display: grid; gap: 8px; }
+.lines div { display: flex; justify-content: space-between; gap: 12px; font-family: var(--font-mono); font-size: 0.9rem; font-variant-numeric: tabular-nums; }
+.lines dt { color: var(--muted); }
+.lines dd { margin: 0; }
+.lines .total { padding-top: 10px; border-top: 1px solid var(--fg); font-size: 1.15rem; font-weight: 500; }
+.lines .total dt { color: var(--fg); }
+
+section { padding-block: 72px 8px; }
+h2.sec { font-family: var(--font-display); font-weight: 700; font-size: clamp(1.8rem, 4.2vw, 2.8rem); letter-spacing: -0.025em; line-height: 1.05; margin: 0 0 12px; text-wrap: balance; max-width: 22ch; }
+.sub { color: var(--muted); max-width: 56ch; margin: 0 0 36px; }
+
+.stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); border-block: 1px solid var(--line); }
+.stats div { padding: 24px 20px 24px 0; }
+.stats b { display: block; font-family: var(--font-display); font-size: 2.2rem; letter-spacing: -0.02em; font-variant-numeric: tabular-nums; }
+.stats span { color: var(--muted); font-size: 0.9rem; }
+
+.features { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0 56px; border-top: 2px solid var(--fg); }
+.feat { padding-block: 22px; border-bottom: 1px solid var(--line); }
+.feat h3 { font-family: var(--font-display); font-weight: 500; font-size: 1.25rem; margin: 0 0 6px; }
+.feat p { margin: 0; color: var(--muted); }
+
+.toggle { display: inline-grid; grid-template-columns: 1fr 1fr; border: 1px solid var(--line); border-radius: 999px; padding: 4px; background: var(--surface); margin-bottom: 28px; }
+.toggle button { font: inherit; font-size: 0.9rem; border: 0; background: transparent; color: var(--muted); padding: 8px 18px; border-radius: 999px; cursor: pointer; }
+.toggle button[aria-pressed="true"] { background: var(--fg); color: var(--bg); }
+.plans { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; }
+.plan { background: var(--surface); border: 1px solid var(--line); border-radius: 6px; padding: 26px; display: flex; flex-direction: column; gap: 14px; min-width: 0; }
+.plan.pick { border: 2px solid var(--accent); }
+.plan h3 { font-family: var(--font-display); font-weight: 500; font-size: 1.3rem; margin: 0; display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+.tag { font-family: var(--font-mono); font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.08em; background: var(--accent); color: var(--accent-fg); padding: 3px 8px; border-radius: 3px; }
+.price { font-family: var(--font-display); font-size: 2.6rem; letter-spacing: -0.03em; font-variant-numeric: tabular-nums; line-height: 1; }
+.price small { font-family: var(--font-body); font-size: 0.9rem; letter-spacing: 0; color: var(--muted); }
+.plan ul { list-style: none; padding: 0; margin: 0; display: grid; gap: 8px; font-size: 0.95rem; flex: 1; }
+.plan li { padding-left: 22px; position: relative; }
+.plan li::before { content: ""; position: absolute; left: 2px; top: 0.55em; width: 10px; height: 5px; border-left: 2px solid var(--good); border-bottom: 2px solid var(--good); transform: rotate(-45deg); }
+
+details { border-bottom: 1px solid var(--line); padding-block: 18px; }
+details:first-of-type { border-top: 2px solid var(--fg); }
+summary { cursor: pointer; font-family: var(--font-display); font-weight: 500; font-size: 1.15rem; list-style: none; display: flex; justify-content: space-between; gap: 16px; }
+summary::-webkit-details-marker { display: none; }
+summary::after { content: "+"; font-family: var(--font-mono); color: var(--accent); }
+details[open] summary::after { content: "–"; }
+details p { margin: 10px 0 0; color: var(--muted); max-width: 62ch; }
+
+.band { margin-top: 80px; background: var(--fg); color: var(--bg); border-radius: 6px; padding: clamp(28px, 6vw, 56px); display: flex; justify-content: space-between; align-items: center; gap: 24px; flex-wrap: wrap; }
+.band h2 { font-family: var(--font-display); font-weight: 700; font-size: clamp(1.6rem, 4vw, 2.4rem); letter-spacing: -0.025em; margin: 0; max-width: 20ch; line-height: 1.05; }
+.band .btn { background: var(--bg); color: var(--fg); border-color: var(--bg); }
+.msg { margin: 0; font-family: var(--font-mono); font-size: 0.85rem; width: 100%; }
+
+footer { margin-top: 56px; padding-block: 28px 44px; border-top: 1px solid var(--line); display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; font-size: 0.85rem; color: var(--muted); }
+footer p { margin: 0; max-width: 62ch; }
+
+@media (max-width: 820px) {
+  .hero { grid-template-columns: 1fr; gap: 36px; padding-block: 36px 48px; }
+  .features { grid-template-columns: 1fr; }
+}
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <a class="logo" href="#top" id="top">bahi<span>.</span></a>
+    <nav aria-label="Main">
+      <a href="#features">Features</a>
+      <a href="#pricing">Pricing</a>
+      <a href="#faq">FAQ</a>
+      <a class="btn" href="#start">Start free</a>
+    </nav>
+  </header>
+
+  <main>
+    <div class="hero">
+      <div>
+        <p class="eyebrow">GST billing for small shops</p>
+        <h1>Send a GST invoice before the customer leaves.</h1>
+        <p class="lede">Bahi makes invoices, tracks who still owes you, and hands your accountant clean GSTR-1 data. No training needed, and it works on a phone.</p>
+        <div class="cta">
+          <a class="btn" href="#start">Start free</a>
+          <a class="btn ghost" href="#pricing">See pricing</a>
+        </div>
+        <p class="fine">Free plan for up to 20 invoices a month. No card needed.</p>
+      </div>
+
+      <div class="calc">
+        <h2>Try it: invoice total</h2>
+        <div class="field">
+          <label for="amt">Amount before tax (₹)</label>
+          <input id="amt" type="number" inputmode="decimal" min="0" step="0.01" value="25000">
+        </div>
+        <div class="field">
+          <label for="rate">GST rate</label>
+          <select id="rate">
+            <option value="0">0%</option>
+            <option value="5">5%</option>
+            <option value="18" selected>18%</option>
+          </select>
+        </div>
+        <div class="field">
+          <label id="supply-label">Customer is</label>
+          <div class="seg" role="group" aria-labelledby="supply-label">
+            <button type="button" data-supply="intra" aria-pressed="true">In your state</button>
+            <button type="button" data-supply="inter" aria-pressed="false">Another state</button>
+          </div>
+        </div>
+        <dl class="lines" id="lines" aria-live="polite"></dl>
+      </div>
+    </div>
+
+    <div class="stats">
+      <div><b>20 sec</b><span>to create and send an invoice</span></div>
+      <div><b>3 taps</b><span>to record a UPI or cash payment</span></div>
+      <div><b>1 file</b><span>for your accountant each month</span></div>
+    </div>
+
+    <section id="features">
+      <h2 class="sec">Built for the counter, not the back office</h2>
+      <p class="sub">Everything a shop owner does in a day, with the tax maths handled.</p>
+      <div class="features">
+        <div class="feat"><h3>Invoices with the right tax split</h3><p>Bahi picks CGST and SGST for sales in your state and IGST for sales to another state, using the place of supply.</p></div>
+        <div class="feat"><h3>Send on WhatsApp or print</h3><p>Share a PDF with one tap, or print a 58 mm thermal receipt from the same screen.</p></div>
+        <div class="feat"><h3>Who owes you, in one list</h3><p>See pending payments sorted by age, and send a polite reminder with a UPI link.</p></div>
+        <div class="feat"><h3>Stock that updates itself</h3><p>Every invoice reduces stock. You get an alert when an item drops below the level you set.</p></div>
+        <div class="feat"><h3>Return-ready data</h3><p>Export B2B, B2C and HSN summaries in the layout your accountant uses for GSTR-1.</p></div>
+        <div class="feat"><h3>Works when the network does not</h3><p>Create invoices offline. They sync when you are back online, with no duplicate numbers.</p></div>
+      </div>
+    </section>
+
+    <section id="pricing">
+      <h2 class="sec">Pricing that stays out of your margin</h2>
+      <p class="sub">Prices are per business, before GST. Pay yearly and get two months free.</p>
+      <div class="toggle" role="group" aria-label="Billing period">
+        <button type="button" data-period="month" aria-pressed="true">Monthly</button>
+        <button type="button" data-period="year" aria-pressed="false">Yearly</button>
+      </div>
+      <div class="plans">
+        <article class="plan">
+          <h3>Starter</h3>
+          <div class="price">₹0<small> forever</small></div>
+          <ul><li>20 invoices a month</li><li>1 user</li><li>WhatsApp and PDF sharing</li><li>Basic stock list</li></ul>
+          <a class="btn ghost" href="#start">Start free</a>
+        </article>
+        <article class="plan pick">
+          <h3>Shop <span class="tag">Most chosen</span></h3>
+          <div class="price"><span data-price data-month="399" data-year="3990">₹399</span><small data-unit> / month</small></div>
+          <ul><li>Unlimited invoices</li><li>3 users</li><li>Payment reminders with UPI link</li><li>GSTR-1 export</li><li>Offline mode</li></ul>
+          <a class="btn" href="#start">Start 14-day trial</a>
+        </article>
+        <article class="plan">
+          <h3>Business</h3>
+          <div class="price"><span data-price data-month="999" data-year="9990">₹999</span><small data-unit> / month</small></div>
+          <ul><li>Everything in Shop</li><li>10 users and 3 branches</li><li>Stock transfer between branches</li><li>Accountant login</li></ul>
+          <a class="btn ghost" href="#start">Start 14-day trial</a>
+        </article>
+      </div>
+    </section>
+
+    <section id="faq">
+      <h2 class="sec">Questions shop owners ask</h2>
+      <p class="sub">&nbsp;</p>
+      <details><summary>Can I import my existing customers and items?</summary><p>Yes. Upload a spreadsheet of customers or items and Bahi maps the columns for you. Most files import in under a minute.</p></details>
+      <details><summary>Do I need a GST number to use Bahi?</summary><p>No. Without a GSTIN you can issue plain bills. Add your GSTIN later in Settings and tax invoices start working from the next bill.</p></details>
+      <details><summary>Who owns my data?</summary><p>You do. Export all invoices, customers and stock to a spreadsheet at any time, on any plan.</p></details>
+      <details><summary>What happens when the trial ends?</summary><p>Your account moves to the free Starter plan. Nothing is deleted, and you can upgrade again whenever you like.</p></details>
+    </section>
+
+    <div class="band" id="start">
+      <h2>Make your next invoice in Bahi.</h2>
+      <a class="btn" href="#top" id="start-btn">Start free</a>
+      <p class="msg" id="start-msg" role="status" hidden>This is a sample page, so there is no sign-up behind this button.</p>
+    </div>
+  </main>
+
+  <footer>
+    <p>Bahi is a fictional product used as a sample sales page. Prices, features and figures are placeholders. GST rates shown in the calculator are examples; check current rates before billing.</p>
+    <p>© 2026 Bahi (sample)</p>
+  </footer>
+</div>
+
+<script>
+(function () {
+  var supply = 'intra';
+  var amt = document.getElementById('amt');
+  var rate = document.getElementById('rate');
+  var lines = document.getElementById('lines');
+
+  function inr(n) {
+    return '₹' + n.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  }
+  function row(label, value, cls) {
+    return '<div' + (cls ? ' class="' + cls + '"' : '') + '><dt>' + label + '</dt><dd>' + value + '</dd></div>';
+  }
+  function render() {
+    var base = Math.max(0, parseFloat(amt.value) || 0);
+    var r = parseFloat(rate.value);
+    var tax = Math.round(base * r) / 100;
+    var html = row('Amount', inr(base));
+    if (supply === 'intra') {
+      var half = Math.round(tax * 50) / 100;
+      html += row('CGST ' + (r / 2) + '%', inr(half)) + row('SGST ' + (r / 2) + '%', inr(tax - half));
+    } else {
+      html += row('IGST ' + r + '%', inr(tax));
+    }
+    html += row('Invoice total', inr(base + tax), 'total');
+    lines.innerHTML = html;
+  }
+  amt.addEventListener('input', render);
+  rate.addEventListener('change', render);
+  document.querySelectorAll('[data-supply]').forEach(function (b) {
+    b.addEventListener('click', function () {
+      supply = b.dataset.supply;
+      document.querySelectorAll('[data-supply]').forEach(function (o) { o.setAttribute('aria-pressed', o === b ? 'true' : 'false'); });
+      render();
+    });
+  });
+  render();
+
+  document.querySelectorAll('[data-period]').forEach(function (b) {
+    b.addEventListener('click', function () {
+      var p = b.dataset.period;
+      document.querySelectorAll('[data-period]').forEach(function (o) { o.setAttribute('aria-pressed', o === b ? 'true' : 'false'); });
+      document.querySelectorAll('[data-price]').forEach(function (el) {
+        el.textContent = '₹' + Number(el.dataset[p]).toLocaleString('en-IN');
+      });
+      document.querySelectorAll('[data-unit]').forEach(function (el) { el.textContent = p === 'year' ? ' / year' : ' / month'; });
+    });
+  });
+
+  document.getElementById('start-btn').addEventListener('click', function (e) {
+    e.preventDefault();
+    document.getElementById('start-msg').hidden = false;
+  });
+  document.querySelectorAll('a.btn[href="#start"]').forEach(function (a) {
+    a.addEventListener('click', function () { document.getElementById('start-msg').hidden = false; });
+  });
+})();
+</script>
+</body>
+</html>
